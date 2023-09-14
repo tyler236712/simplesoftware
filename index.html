@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drawing</title>
+    <title>SimpleSoftware</title>
     <style>
         *, ::before, ::after {
             margin: 0;
@@ -19,142 +19,9 @@
             overflow: hidden;
         }
 
-        canvas {
-            background-color: inherit;
-        }
-
     </style>
 </head>
 <body>
-    <canvas width="5000" height="5000"></canvas>
-
-    <script>
-        const canvas = document.querySelector("canvas")
-        const penColor = getComputedStyle(document.documentElement).getPropertyValue("--pen-color")
-        var historyStack = []
-
-        // stores canvas history on stack
-        const pushHistory = (ctx) => {
-            const width = canvas.width
-            const height = canvas.height
-            historyStack.push(ctx.getImageData(0,0,width, height))
-
-            if (historyStack.length > 50) historyStack = historyStack.slice(25)
-        }
-
-        // pops history from stack. Returns null if stack is empty
-        const popHistory = () => {
-            return historyStack.pop()
-        }
-
-        // draws to canvas
-        canvas.addEventListener("mousedown", draw)
-
-        // erases fromc canvas
-        canvas.addEventListener("mousedown", erase)
-        
-        // clears canvas when 'c' is pressed
-        window.addEventListener("keydown", clear)
-
-        // history so can get back to old state
-        window.addEventListener("keydown", history)
-
-        function draw(e) {
-            // only draws when left mouse button is pressed
-            if (!e.ctrlKey) {
-                const ctx = canvas.getContext("2d")
-                pushHistory(ctx)
-                ctx.lineWidth = 5;
-                ctx.strokeStyle = penColor
-
-                // Makes it so old lines aren't redrawn after canvas is cleared
-                // comment out, draw some lines, clear the canvas, and draw again to see what I mean
-                ctx.beginPath()
-
-                // current coordinates of mouse
-                const x = Math.floor(e.x)
-                const y = Math.floor(e.y)
-                ctx.moveTo(x, y)
-
-                // draws on move
-                const onMove = (ev) => {
-                    // where mouse moved to
-                    const x = Math.floor(ev.x)
-                    const y = Math.floor(ev.y)
-                    ctx.lineTo(x, y)
-                    ctx.stroke()
-                }
-
-                // cleanup
-                const onUp = (ev) => {
-                    canvas.removeEventListener("mousemove", onMove)
-                    canvas.removeEventListener("mouseup", onUp)
-                    canvas.removeEventListener("mouseleave", onUp)
-                }
-
-                canvas.addEventListener("mousemove", onMove)
-                canvas.addEventListener("mouseup", onUp)
-                canvas.addEventListener("mouseleave", onUp)
-            }
-
-        }
-
-        
-        function erase(e) {
-            // only erases when right mouse button is pressed
-            if (e.ctrlKey) {
-                // change cursor
-                canvas.style.cursor = 'url(eraser50.png), pointer'
-
-                const ctx = canvas.getContext("2d")
-                let width = 50
-                let height = 50
-
-                const x = Math.floor(e.x) -  Math.floor(width/2) + 25 // - 25 otherwise eraser is outside the eraser pointer
-                const y = Math.floor(e.y) - Math.floor(height/2) + 25 
-                
-                ctx.clearRect(x, y, width, height)
-
-                const onMove = ev => {
-                    const x = Math.floor(ev.x) -  Math.floor(width/2) + 25
-                    const y = Math.floor(ev.y) - Math.floor(height/2) + 25
-
-                    ctx.clearRect(x, y, width, height)
-                }
-
-                const onUp = ev => {
-                    canvas.style.cursor = null
-                    canvas.removeEventListener("mousemove", onMove)
-                    canvas.removeEventListener("mouseup", onUp)
-                    canvas.removeEventListener("mouseleave", onUp)
-                }
-
-                canvas.addEventListener("mousemove", onMove)
-                canvas.addEventListener("mouseup", onUp)
-                canvas.addEventListener("mouseleave", onUp)
-            }
-        }
-
-        function clear(e) {
-            if (e.key.toLowerCase() === "c") {
-                const ctx = canvas.getContext("2d")
-                pushHistory(ctx)
-                
-                width = canvas.width
-                height = canvas.height
-
-                ctx.clearRect(0,0, width, height)
-
-            }
-        }
-
-        function history(e) {
-            if (e.key.toLowerCase() === "z" && e.ctrlKey) {
-                const ctx = canvas.getContext("2d")
-                const imageData = popHistory()
-                if (imageData != null) ctx.putImageData(imageData, 0, 0)
-            }
-        }
-    </script>
+    
 </body>
 </html>

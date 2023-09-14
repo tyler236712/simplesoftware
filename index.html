@@ -99,7 +99,7 @@
 
         }
 
-        // scuffed but fuck it for now
+        
         function erase(e) {
             // only erases when right mouse button is pressed
             if (e.ctrlKey) {
@@ -110,14 +110,14 @@
                 let width = 50
                 let height = 50
 
-                const x = Math.floor(e.x) -  Math.floor(width/2)
-                const y = Math.floor(e.y) - Math.floor(height/2)
+                const x = Math.floor(e.x) -  Math.floor(width/2) + 25 // - 25 otherwise eraser is outside the eraser pointer
+                const y = Math.floor(e.y) - Math.floor(height/2) + 25 
                 
                 ctx.clearRect(x, y, width, height)
 
                 const onMove = ev => {
-                    const x = Math.floor(ev.x) -  Math.floor(width/2)
-                    const y = Math.floor(ev.y) - Math.floor(height/2)
+                    const x = Math.floor(ev.x) -  Math.floor(width/2) + 25
+                    const y = Math.floor(ev.y) - Math.floor(height/2) + 25
 
                     ctx.clearRect(x, y, width, height)
                 }
@@ -138,20 +138,12 @@
         function clear(e) {
             if (e.key.toLowerCase() === "c") {
                 const ctx = canvas.getContext("2d")
+                pushHistory(ctx)
                 
                 width = canvas.width
                 height = canvas.height
 
                 ctx.clearRect(0,0, width, height)
-
-                const onMove = ev => {
-                    const x = ev.x
-                    const y = ev.y
-
-                    ctx.translate(x, y)
-                }
-
-                canvas.addEventListener("mousemove", onMove)
 
             }
         }
